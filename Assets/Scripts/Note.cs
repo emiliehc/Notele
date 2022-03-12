@@ -23,7 +23,7 @@ public enum Modifier : int
 public sealed record Tone
 {
     public ToneLetter toneLetter { get; set; } = default;
-    public Modifier modifier { get; set; } = Modifier.None;
+    public Modifier modifier { get; set; } = None;
 
     public static implicit operator (ToneLetter, Modifier)(Tone record)
     {
@@ -51,6 +51,12 @@ public sealed record Tone
         Flat => "b",
         _ => ""
     };
+    
+    public void Deconstruct(out ToneLetter _toneLetter, out Modifier _modifier)
+    {
+        _toneLetter = toneLetter;
+        _modifier = modifier;
+    }
 }
 
 public record Note
@@ -74,5 +80,17 @@ public record Note
         return note.tone + note.octave * 12;
     }
 
-    public const float A4 = 440.0f;
+    public void Deconstruct(out Tone _tone, out int _octave)
+    {
+        _tone = tone;
+        _octave = octave;
+    }
+
+    public float frequency => this switch
+    {
+        ((A, None), 4) => 440.0f,
+        _ => A4.frequency / (int) A4 * (int) this
+    };
+
+    public static readonly Note A4 = (A, 4);
 }
