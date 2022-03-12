@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using static ToneLetter;
 using static Modifier;
 
@@ -51,7 +52,7 @@ public sealed record Tone
         Flat => "b",
         _ => ""
     };
-    
+
     public void Deconstruct(out ToneLetter _toneLetter, out Modifier _modifier)
     {
         _toneLetter = toneLetter;
@@ -75,6 +76,7 @@ public record Note
     }
 
     public override string ToString() => tone.ToString() + octave;
+
     public static implicit operator int(Note note)
     {
         return note.tone + note.octave * 12;
@@ -89,8 +91,9 @@ public record Note
     public float frequency => this switch
     {
         ((A, None), 4) => 440.0f,
-        _ => A4.frequency / (int) A4 * (int) this
+        _ => A4.frequency * Mathf.Pow(stepFactor, this - A4)
     };
 
     public static readonly Note A4 = (A, 4);
+    public static readonly float stepFactor = Mathf.Pow(2, 1.0f / 12.0f);
 }
