@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static ToneLetter;
 using static Modifier;
+using static NoteState;
 using Notes = System.Collections.Generic.List<Note>;
 
 public enum ToneLetter : int
@@ -97,6 +98,13 @@ public sealed class Tone : IComparable<Tone>
     public static bool operator !=(Tone lhs, Tone rhs) => !(lhs == rhs);
 
     public override int GetHashCode() => relativeValue.GetHashCode();
+}
+
+public enum NoteState
+{
+    Default,
+    DoesNotExist,
+    Matches
 }
 
 public sealed class Note : IComparable<Note>
@@ -196,4 +204,10 @@ public static class Program
         var q = NewRandomQuestion_aux();
         return List.ForAll(q, n => List.Contains(notes, n)) ? q : NewRandomQuestion();
     }
+
+    public static List<(Note, NoteState)> CorrectnessCompare(Notes answer, Notes userResponse) =>
+        List.Map(List.Map(notes, note => (note, NoteState.Default)),
+            noteState => List.Contains(answer, noteState.note)
+                ? (noteState.note, List.Contains(userResponse, noteState.note) ? Matches : DoesNotExist)
+                : (noteState.note, noteState.Default));
 }

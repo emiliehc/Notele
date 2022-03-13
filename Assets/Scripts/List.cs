@@ -20,6 +20,11 @@ public static class List
         return new(list);
     }
 
+    public static List<T> OfLength<T>(int length, T v = default)
+    {
+        return length == 0 ? Empty<T>() : OfLength(length - 1, v).Append(v);
+    }
+
     public static List<T> Append<T>(this List<T> lhs, IEnumerable<T> rhs)
     {
         lhs = lhs.Clone();
