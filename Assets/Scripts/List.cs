@@ -99,6 +99,25 @@ public static class List
         var (h, t) = list;
         return FoldLeft(t, folder(starter, h), folder);
     }
+    
+    private static List<a> Filter_aux<a>(List<a> list, Predicate<a> predicate, List<a> acc)
+    {
+        if (list.IsEmpty())
+            return acc;
+
+        var (h, t) = list;
+        return Filter_aux<a>(t, predicate, predicate(h) ? acc.Append(h) : acc);
+    }
+
+    public static List<a> Filter<a>(List<a> list, Predicate<a> predicate)
+    {
+        return Filter_aux(list, predicate, Empty<a>());
+    }
+
+    public static List<a> Remove<a>(List<a> l, a t)
+    {
+        return Filter(l, e => !e.Equals(t));
+    }
 
     public static string StringOf<T>(List<T> list)
     {
