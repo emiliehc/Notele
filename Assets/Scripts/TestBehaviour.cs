@@ -12,5 +12,9 @@ public class TestBehaviour : MonoBehaviour
         // var l = List.Of<Note>((A, 4), (C, 4));
         //print(NewRandomQuestion());
         // print(List.StringOf(NewRandomQuestion()));
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            
+        }
     }
 }
