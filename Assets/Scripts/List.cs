@@ -106,7 +106,7 @@ public static class List
             return acc;
 
         var (h, t) = list;
-        return Filter_aux<a>(t, predicate, predicate(h) ? acc.Append(h) : acc);
+        return Filter_aux(t, predicate, predicate(h) ? acc.Append(h) : acc);
     }
 
     public static List<a> Filter<a>(List<a> list, Predicate<a> predicate)
@@ -117,6 +117,13 @@ public static class List
     public static List<a> Remove<a>(List<a> l, a t)
     {
         return Filter(l, e => !e.Equals(t));
+    }
+
+    public static List<a> Sort<a>(List<a> l, Func<a, a, int> comparator)
+    {
+        l = l.Clone();
+        l.Sort((lhs, rhs) => comparator(lhs, rhs));
+        return l;
     }
 
     public static string StringOf<T>(List<T> list)

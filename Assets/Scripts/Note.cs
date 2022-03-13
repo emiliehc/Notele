@@ -142,9 +142,13 @@ public sealed class Note : IComparable<Note>
 
     public int CompareTo(Note other) => relativeValue.CompareTo(other.relativeValue);
 
-    public override bool Equals(object obj) => this switch
+    public override bool Equals(object obj) => obj switch
     {
-        { } other => relativeValue == other.relativeValue
+        { } other => other switch
+        {
+            Note otherNote => relativeValue == otherNote.relativeValue,
+            _ => false
+        }
     };
 
     public static bool operator ==(Note lhs, Note rhs)
@@ -175,4 +179,7 @@ public static class Program
 
     public static Notes Major(Note baseNote)
         => List.Of(baseNote, MajorThirdOf(baseNote), (Note) (baseNote + 7));
+    
+    public static Notes Minor(Note baseNote)
+        => List.Of(baseNote, (Note)(baseNote + 3), (Note)(baseNote + 7)); 
 }

@@ -9,6 +9,7 @@ public class TestBehaviour : MonoBehaviour
 {
     private void Update()
     {
-        print(((Note)((C, Flat), 4)) == ((Note)(B, 3)));
+        var l = List.Of<Note>((A, 4), (C, 4));
+        print(List.StringOf(List.Remove(l, (A, 4))));
     }
 }
