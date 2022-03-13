@@ -3,15 +3,12 @@ using UnityEngine;
 using static ToneLetter;
 using static Modifier;
 using static Reference;
+using static Program;
 
 public class TestBehaviour : MonoBehaviour
 {
     private void Update()
     {
-        Note note = (C, 4);
-        for (var i = 0; i < 48; i++)
-        {
-            print(((Note)(note + i)).frequency);
-        }
+        print(((Note)((C, Flat), 4)) == ((Note)(B, 3)));
     }
 }

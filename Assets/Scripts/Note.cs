@@ -66,7 +66,7 @@ public sealed class Tone : IComparable<Tone>
             _ => num.MatchToneLetter() switch
             {
                 { } letter => (letter, None),
-                _ => (((Tone)(num - 1)).toneLetter, Sharp)
+                _ => (((Tone) (num - 1)).toneLetter, Sharp)
             }
         };
     }
@@ -110,7 +110,7 @@ public sealed class Note : IComparable<Note>
 
     public static implicit operator Note((Tone, int) tuple)
         => new() {tone = tuple.Item1, octave = tuple.Item2};
-    
+
     public static implicit operator Note(int num)
     {
         var octave = num / 12;
@@ -148,7 +148,7 @@ public sealed class Note : IComparable<Note>
     };
 
     public static bool operator ==(Note lhs, Note rhs)
-        => lhs != null && lhs.Equals(rhs);
+        => lhs is not null && lhs.Equals(rhs);
 
     public static bool operator !=(Note lhs, Note rhs) => !(lhs == rhs);
 
@@ -159,9 +159,20 @@ public static class Program
 {
     public delegate Notes NoteGenerator(Note baseNote);
 
-    private static Notes MajorThird(Note baseNote)
-    {
-        var ((_, _), _) = baseNote;
-        return List.Of(baseNote);
-    }
+    public static readonly List<NoteGenerator> generators = List.Of<NoteGenerator>(
+        MajorThird,
+        MajorFifth
+    );
+
+    public static Note MajorThirdOf(Note note) => note + 4;
+    public static Note MajorFifthOf(Note note) => note + 6;
+
+    public static Notes MajorThird(Note baseNote)
+        => List.Of(baseNote, MajorThirdOf(baseNote));
+
+    public static Notes MajorFifth(Note baseNote)
+        => List.Of(baseNote, MajorFifthOf(baseNote));
+
+    public static Notes Major(Note baseNote)
+        => List.Of(baseNote, MajorThirdOf(baseNote), (Note) (baseNote + 7));
 }

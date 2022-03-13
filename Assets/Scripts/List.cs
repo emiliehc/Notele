@@ -76,4 +76,36 @@ public static class List
         action(h);
         ForEach(t, action);
     }
+
+    private static List<U> Map_aux<T, U>(List<T> list, Func<T, U> map, List<U> acc)
+    {
+        if (list.IsEmpty())
+            return acc;
+
+        var (h, t) = list;
+        return Map_aux(t, map, acc.Append(map(h)));
+    }
+
+    public static List<U> Map<T, U>(List<T> list, Func<T, U> map)
+    {
+        return Map_aux(list, map, Empty<U>());
+    }
+
+    public static b FoldLeft<a, b>(List<a> list, b starter, Func<b, a, b> folder)
+    {
+        if (list.IsEmpty())
+            return starter;
+
+        var (h, t) = list;
+        return FoldLeft(t, folder(starter, h), folder);
+    }
+
+    public static string StringOf<T>(List<T> list)
+    {
+        if (list.IsEmpty())
+            return "[]";
+
+        var (h, t) = list;
+        return "[" + h + FoldLeft(Map(t, e => e.ToString()), "", (lhs, rhs) => lhs + "; " + rhs) + "]";
+    }
 }
