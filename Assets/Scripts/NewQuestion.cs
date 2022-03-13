@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static Note;
 using static Tone;
 using static ToneLetter;
@@ -31,8 +33,15 @@ public class NewQuestion : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        var counter = GameObject.FindWithTag("Counter");
+        var counterText = counter.GetComponent<TextMeshProUGUI>();
+        counterText.text = Attempts.ToString();
         if (!Input.GetKeyDown(KeyCode.C)) return;
         var userResponse = NoteButton.NoteList;
+        if (userResponse.IsEmpty())
+            return;
+
+        Attempts++;
         var noteButtons = List.Map(GameObject.FindGameObjectsWithTag("Note").ToList(),
             go => go.GetComponent<NoteButton>());
         List.ForEach(noteButtons, btn =>
