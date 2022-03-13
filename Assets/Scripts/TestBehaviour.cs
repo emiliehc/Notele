@@ -10,6 +10,7 @@ public class TestBehaviour : MonoBehaviour
     private void Update()
     {
         var l = List.Of<Note>((A, 4), (C, 4));
-        print(List.StringOf(List.Remove(l, (A, 4))));
+        //print(NewRandomQuestion());
+        print(List.StringOf(NewRandomQuestion()));
     }
 }

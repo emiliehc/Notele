@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
+using Random = UnityEngine.Random;
 
 public static class List
 {
@@ -126,6 +128,27 @@ public static class List
         return l;
     }
 
+    public static a PickRandom<a>(List<a> l)
+    {
+        if (l.IsEmpty())
+            return default;
+
+        var len = l.Count;
+        return l[Random.Range(0, len)];
+    }
+
+    private static List<a> Generate_aux<a>(a init, Func<a, a> next, Predicate<a> asLongAs, List<a> acc)
+    {
+        if (!asLongAs(init))
+            return acc;
+
+        var nextEl = next(init);
+        return Generate_aux(nextEl, next, asLongAs, acc.Append(init));
+    }
+
+    public static List<a> Generate<a>(a init, Func<a, a> next, Predicate<a> asLongAs)
+        => Generate_aux(init, next, asLongAs, Empty<a>());
+
     public static string StringOf<T>(List<T> list)
     {
         if (list.IsEmpty())
@@ -133,5 +156,46 @@ public static class List
 
         var (h, t) = list;
         return "[" + h + FoldLeft(Map(t, e => e.ToString()), "", (lhs, rhs) => lhs + "; " + rhs) + "]";
+    }
+
+    public static bool Contains<a>(List<a> l, a t)
+        => Exists(l, el => el.Equals(t));
+
+    private delegate T Supplier<out T>();
+    
+    private static bool ForAll_aux<a>(List<a> l, Predicate<a> cond, Supplier<bool> c)
+    {
+        if (!c())
+            return false;
+        
+        if (l.IsEmpty())
+            return true;
+
+        var (h, t) = l;
+
+        return ForAll_aux(t, cond, () => cond(h));
+    }
+
+    public static bool ForAll<a>(List<a> l, Predicate<a> cond)
+    {
+        return ForAll_aux(l, cond, () => true);
+    }
+    
+    private static bool Exists_aux<a>(List<a> l, Predicate<a> cond, Supplier<bool> c)
+    {
+        if (c())
+            return true;
+        
+        if (l.IsEmpty())
+            return false;
+
+        var (h, t) = l;
+
+        return Exists_aux(t, cond, () => cond(h));
+    }
+
+    public static bool Exists<a>(List<a> l, Predicate<a> cond)
+    {
+        return Exists_aux(l, cond, () => false);
     }
 }

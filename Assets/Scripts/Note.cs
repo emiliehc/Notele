@@ -165,8 +165,13 @@ public static class Program
 
     public static readonly List<NoteGenerator> generators = List.Of<NoteGenerator>(
         MajorThird,
-        MajorFifth
+        MajorFifth,
+        Major,
+        Minor
     );
+
+    public static readonly Notes notes
+        = List.Generate<Note>((C, 3), n => n + 1, n => n < (Note) (C, 5));
 
     public static Note MajorThirdOf(Note note) => note + 4;
     public static Note MajorFifthOf(Note note) => note + 6;
@@ -179,7 +184,16 @@ public static class Program
 
     public static Notes Major(Note baseNote)
         => List.Of(baseNote, MajorThirdOf(baseNote), (Note) (baseNote + 7));
-    
+
     public static Notes Minor(Note baseNote)
-        => List.Of(baseNote, (Note)(baseNote + 3), (Note)(baseNote + 7)); 
+        => List.Of(baseNote, (Note) (baseNote + 3), (Note) (baseNote + 7));
+
+    private static Notes NewRandomQuestion_aux()
+        => List.PickRandom(generators)(List.PickRandom(notes));
+
+    public static Notes NewRandomQuestion()
+    {
+        var q = NewRandomQuestion_aux();
+        return List.ForAll(q, n => List.Contains(notes, n)) ? q : NewRandomQuestion();
+    }
 }
