@@ -18,6 +18,8 @@ public class NoteButton : MonoBehaviour
     public int octave;
     public bool isEnabled = false;
     public static List<Note> NoteList = List.Of<Note>();
+
+    private bool canBeToggled = true;
     // Start is called before the first frame update
     // void Start()
     // {
@@ -26,6 +28,7 @@ public class NoteButton : MonoBehaviour
 
     public void Toggle()
     {
+        if (!canBeToggled) return;
         if (isEnabled)
         {
             transform.localScale += new Vector3(0.05f, 0.05f);
@@ -52,16 +55,18 @@ public class NoteButton : MonoBehaviour
 
     private IEnumerator TemporaryStateChangeTo_aux(NoteState state)
     {
+        canBeToggled = false;
         var img = GetComponent<Image>();
         var originalColor = img.color;
         img.color = state switch
         {
-            NoteState.DoesNotExist => Color.grey,
+            NoteState.DoesNotExist => new Color(0.9f, 0.6f, 0.0f),
             NoteState.Matches => Color.green,
             _ => originalColor
         };
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
         img.color = originalColor;
+        canBeToggled = true;
     }
 
     // Update is called once per frame
