@@ -21,6 +21,7 @@ public class NewQuestion : MonoBehaviour
     {
         MakeNewQuestion();
         Attempts = 0;
+        Destroy(GameObject.Find("Prompt"), 10.0f);
     }
 
     public void MakeNewQuestion()
