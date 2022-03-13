@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using Random = UnityEngine.Random;
 
@@ -106,7 +107,7 @@ public static class List
         var (h, t) = list;
         return FoldLeft(t, folder(starter, h), folder);
     }
-    
+
     private static List<a> Filter_aux<a>(List<a> list, Predicate<a> predicate, List<a> acc)
     {
         if (list.IsEmpty())
@@ -167,12 +168,12 @@ public static class List
         => Exists(l, el => el.Equals(t));
 
     private delegate T Supplier<out T>();
-    
+
     private static bool ForAll_aux<a>(List<a> l, Predicate<a> cond, Supplier<bool> c)
     {
         if (!c())
             return false;
-        
+
         if (l.IsEmpty())
             return true;
 
@@ -185,12 +186,12 @@ public static class List
     {
         return ForAll_aux(l, cond, () => true);
     }
-    
+
     private static bool Exists_aux<a>(List<a> l, Predicate<a> cond, Supplier<bool> c)
     {
         if (c())
             return true;
-        
+
         if (l.IsEmpty())
             return false;
 
@@ -202,5 +203,10 @@ public static class List
     public static bool Exists<a>(List<a> l, Predicate<a> cond)
     {
         return Exists_aux(l, cond, () => false);
+    }
+
+    public static bool Equals<a>(List<a> lhs, List<a> rhs)
+    {
+        return lhs.Count == rhs.Count && lhs.SequenceEqual(rhs);
     }
 }
