@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static ToneLetter;
 using static Modifier;
+using Notes = System.Collections.Generic.List<Note>;
 
 public enum ToneLetter : int
 {
@@ -12,6 +14,21 @@ public enum ToneLetter : int
     G = 7,
     A = 9,
     B = 11
+}
+
+public static class ToneLetterExt
+{
+    public static ToneLetter? MatchToneLetter(this int num)
+    {
+        var asToneLetter = (ToneLetter) num;
+        return asToneLetter switch
+        {
+            C or D or E or F or G or A or B => asToneLetter,
+            < C => MatchToneLetter(num - 12),
+            > B => MatchToneLetter(num + 12),
+            _ => null
+        };
+    }
 }
 
 public enum Modifier : int
@@ -28,23 +45,30 @@ public sealed class Tone : IComparable<Tone>
     public int relativeValue => (int) this;
 
     public static implicit operator (ToneLetter, Modifier)(Tone record)
-    {
-        return (record.toneLetter, record.modifier);
-    }
+        => (record.toneLetter, record.modifier);
 
     public static implicit operator Tone((ToneLetter, Modifier) tuple)
-    {
-        return new Tone {toneLetter = tuple.Item1, modifier = tuple.Item2};
-    }
+        => new() {toneLetter = tuple.Item1, modifier = tuple.Item2};
 
     public static implicit operator Tone(ToneLetter tuple)
-    {
-        return new Tone {toneLetter = tuple};
-    }
+        => new() {toneLetter = tuple};
 
     public static implicit operator int(Tone tone)
+        => (int) tone.toneLetter + (int) tone.modifier;
+
+    public static implicit operator Tone(int num)
     {
-        return (int) tone.toneLetter + (int) tone.modifier;
+        var asToneLetter = (ToneLetter) num;
+        return asToneLetter switch
+        {
+            < C => num + 12,
+            > B => num - 12,
+            _ => num.MatchToneLetter() switch
+            {
+                { } letter => (letter, None),
+                _ => (((Tone)(num - 1)).toneLetter, Sharp)
+            }
+        };
     }
 
     public override string ToString() => toneLetter + modifier switch
@@ -86,6 +110,13 @@ public sealed class Note : IComparable<Note>
 
     public static implicit operator Note((Tone, int) tuple)
         => new() {tone = tuple.Item1, octave = tuple.Item2};
+    
+    public static implicit operator Note(int num)
+    {
+        var octave = num / 12;
+        var remain = num % 12;
+        return (remain, octave);
+    }
 
     public override string ToString() => tone.ToString() + octave;
 
@@ -126,4 +157,11 @@ public sealed class Note : IComparable<Note>
 
 public static class Program
 {
+    public delegate Notes NoteGenerator(Note baseNote);
+
+    private static Notes MajorThird(Note baseNote)
+    {
+        var ((_, _), _) = baseNote;
+        return List.Of(baseNote);
+    }
 }

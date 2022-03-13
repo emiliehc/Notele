@@ -9,11 +9,9 @@ public class TestBehaviour : MonoBehaviour
     private void Update()
     {
         Note note = (C, 4);
-        Tone tone = (C, Sharp);
-        var ((letter, modifier), octave) = note;
-        var l = List.Of(1, 2, 3);
-        var counter = Ref(0);
-        var value = !counter;
-        
+        for (var i = 0; i < 48; i++)
+        {
+            print(((Note)(note + i)).frequency);
+        }
     }
 }
