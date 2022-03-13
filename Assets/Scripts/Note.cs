@@ -23,8 +23,8 @@ public enum Modifier : int
 
 public sealed record Tone
 {
-    public ToneLetter toneLetter { get; set; } = default;
-    public Modifier modifier { get; set; } = None;
+    public ToneLetter toneLetter { get; private set; } = default;
+    public Modifier modifier { get; private set; } = None;
 
     public static implicit operator (ToneLetter, Modifier)(Tone record)
     {
@@ -58,12 +58,14 @@ public sealed record Tone
         _toneLetter = toneLetter;
         _modifier = modifier;
     }
+    
+    
 }
 
-public record Note
+public record Note : IComparable<Note>
 {
-    public Tone tone { get; set; } = default;
-    public int octave { get; set; } = default;
+    public Tone tone { get; private set; } = default;
+    public int octave { get; private set; } = default;
 
     public static implicit operator (Tone, int)(Note record)
     {
@@ -96,4 +98,6 @@ public record Note
 
     public static readonly Note A4 = (A, 4);
     public static readonly float stepFactor = Mathf.Pow(2, 1.0f / 12.0f);
+
+    public int CompareTo(Note other) => ((int) this).CompareTo((int) other);
 }
