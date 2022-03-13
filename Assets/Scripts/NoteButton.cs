@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 using static Note;
 using static Tone;
 using static ToneLetter;
@@ -42,7 +45,24 @@ public class NoteButton : MonoBehaviour
 
     public Note note => ((toneLetter, modifier), octave);
 
-    
+    public void TemporaryStateChangeTo(NoteState state)
+    {
+        StartCoroutine(TemporaryStateChangeTo_aux(state));
+    }
+
+    private IEnumerator TemporaryStateChangeTo_aux(NoteState state)
+    {
+        var img = GetComponent<Image>();
+        var originalColor = img.color;
+        img.color = state switch
+        {
+            NoteState.DoesNotExist => Color.grey,
+            NoteState.Matches => Color.green,
+            _ => originalColor
+        };
+        yield return new WaitForSeconds(5);
+        img.color = originalColor;
+    }
 
     // Update is called once per frame
     // void Update()
